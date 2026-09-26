@@ -1,0 +1,13 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.upsc.notemaker74'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.upsc.notemaker.ultimate'
+        minSdk 23
+        targetSdk 34
+        versionCode 110
+        versionName '11.0'
+    }
+}

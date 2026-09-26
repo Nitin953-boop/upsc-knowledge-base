@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta charset="utf-8">
+<title>UPSC NoteMaker Ultimate</title>
+<style>
+:root{--ink:#1f2328;--muted:#6b7280;--line:#d9dde3;--panel:#fff;--bg:#eef1f5;--accent:#2f5bea;--pageW:min(820px,calc(100vw - 40px));--pageH:1120px}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--bg)}
+button,select,input{font:inherit}.hidden{display:none!important}
+.top{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 10px;position:fixed;left:0;right:0;top:0;z-index:100}
+.brand{font-weight:700;white-space:nowrap}.docname{border:0;outline:0;flex:1;min-width:90px;font-size:16px}.save{font-size:12px;color:var(--muted);white-space:nowrap}
+.iconbtn,.filebtn{height:34px;border:1px solid var(--line);background:#fff;border-radius:6px;padding:0 10px}.filebtn{background:#202124;color:#fff;border-color:#202124}
+.tabs{position:fixed;top:56px;left:0;right:0;height:38px;background:#fff;border-bottom:1px solid var(--line);z-index:99;display:flex;padding-left:8px}
+.tab{border:0;background:transparent;padding:0 15px;border-bottom:3px solid transparent}.tab.active{border-bottom-color:var(--accent);font-weight:700}
+.ribbon{position:fixed;top:94px;left:0;right:0;min-height:56px;background:#fff;border-bottom:1px solid var(--line);z-index:98}
+.pane{display:none;align-items:center;gap:5px;flex-wrap:wrap;padding:7px 9px;min-height:55px}.pane.active{display:flex}
+.pane button,.pane select{height:34px;border:1px solid var(--line);background:#fff;border-radius:5px;padding:0 9px}
+.pane button:hover,.pane select:hover{background:#f5f7fa}.sep{height:28px;width:1px;background:#ddd;margin:0 3px}
+.color{width:30px!important;padding:2px!important}.find{height:34px;border:1px solid var(--line);border-radius:5px;padding:0 7px;width:220px}
+.workspace{padding-top:150px;min-height:100vh;overflow:auto}.editor-scroll{padding:30px 20px 120px;display:flex;justify-content:center}
+.doc{position:relative;width:var(--pageW);min-height:var(--pageH);background:#fff;box-shadow:0 2px 14px #0002;padding:76px 78px 90px;overflow:visible}
+.doc:focus{outline:0}.doc:empty:before{content:"Start writing…";color:#a1a7b0}
+.doc.editing{caret-color:#111}.doc h1{font-size:31px;line-height:1.2;margin:0 0 20px}.doc h2{font-size:23px;margin:22px 0 12px}.doc h3{font-size:18px;margin:18px 0 8px}.doc h4{font-size:15px;margin:14px 0 6px}.doc p{margin:0 0 10px;line-height:1.55}.doc blockquote{border-left:4px solid #9aa1ab;padding:7px 16px;margin:14px 0;color:#555}.doc hr{border:0;border-top:1px solid #aaa;margin:25px 0}
+.pagebreak{height:28px;margin:30px -20px;border-top:2px dashed #aaa;border-bottom:2px dashed #aaa;position:relative}.pagebreak:after{content:"Page break";position:absolute;left:50%;top:5px;transform:translateX(-50%);font-size:11px;color:#888;background:#fff;padding:0 8px}
+#inkLayer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}.drawing #inkLayer{pointer-events:auto;cursor:crosshair}
+.obj{position:absolute;z-index:30;border:1px solid transparent;user-select:none;touch-action:none}.obj.selected{border:1px dashed #5470b8}.obj img,.obj video{display:block;width:100%;height:100%;object-fit:contain}.obj audio{width:100%;margin-top:25px}.obj .handle{display:none;position:absolute;width:10px;height:10px;background:#fff;border:1px solid #555}.obj.selected .handle{display:block}.hbr{right:-6px;bottom:-6px;cursor:nwse-resize}.hbl{left:-6px;bottom:-6px;cursor:nesw-resize}.htr{right:-6px;top:-6px;cursor:nesw-resize}.htl{left:-6px;top:-6px;cursor:nwse-resize}.obj .rotate{display:none;position:absolute;left:50%;top:-25px;transform:translateX(-50%);font-size:16px}.obj.selected .rotate{display:block}
+.obj.file{padding:12px 14px;background:#f6f7f9;border:1px solid #cfd4dc;border-radius:6px;min-width:160px}.obj.file.selected{border:1px dashed #5470b8}.fileicon{font-size:22px;margin-right:7px}.filename{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sticky{position:absolute;z-index:35;width:210px;min-height:150px;background:#fff6a5;border:1px solid #d7c85e;box-shadow:0 4px 12px #0002;padding:12px;border-radius:3px;touch-action:none}.sticky.selected{outline:2px solid #7b6e00}.sticky:before{content:"Sticky note";display:block;font-size:10px;color:#756b00;margin-bottom:6px}.sticky .close{position:absolute;right:4px;top:2px;border:0;background:transparent;font-size:16px;color:#756b00}
+table.grid{border-collapse:collapse;width:100%;margin:14px 0}.grid td,.grid th{border:1px solid #8b929d;min-width:65px;height:30px;padding:6px;vertical-align:top}.grid th{background:#f4f5f7;font-weight:700}.tablebox{position:relative}.tabletools{display:none;gap:3px;margin:3px 0}.tablebox.selected .tabletools{display:flex}.tabletools button{font-size:11px;padding:3px 6px;border:1px solid #bbb;background:#fff;border-radius:3px}
+.toc{position:fixed;right:14px;top:158px;width:280px;max-height:65vh;overflow:auto;background:#fff;border:1px solid #ccd1d8;box-shadow:0 5px 18px #0002;z-index:80;padding:14px;border-radius:7px}.toc a{display:block;color:#333;text-decoration:none;padding:5px}.toc a:hover{background:#f0f3f7}
+.status{position:fixed;right:14px;bottom:14px;background:#222;color:#fff;padding:7px 10px;border-radius:6px;font-size:12px;z-index:120}
+.filemenu{position:fixed;top:57px;left:8px;z-index:130;background:#fff;border:1px solid #ccd1d8;box-shadow:0 8px 22px #0002;border-radius:6px;padding:6px;width:220px}.filemenu button{display:block;width:100%;text-align:left;border:0;background:#fff;padding:9px;border-radius:4px}.filemenu button:hover{background:#eef2f7}
+.modal{position:fixed;inset:0;background:#0005;z-index:200;display:flex;align-items:center;justify-content:center}.dialog{width:min(560px,94vw);max-height:84vh;overflow:auto;background:#fff;border-radius:10px;padding:18px;box-shadow:0 15px 50px #0004}.dialog h3{margin-top:0}.dialog input,.dialog select{width:100%;height:38px;border:1px solid #ccd1d8;border-radius:5px;padding:0 8px}.dialog .row{display:flex;gap:8px;margin-top:10px}.dialog button{border:1px solid #ccd1d8;background:#fff;padding:8px 11px;border-radius:5px}.dialog .primary{background:#202124;color:#fff}
+.reading .top,.reading .tabs,.reading .ribbon{display:none}.reading .workspace{padding-top:0}.reading .editor-scroll{padding-top:50px}.reading .doc{box-shadow:none;width:min(900px,100%);font-size:19px;line-height:1.8;padding:80px 90px}.reading .obj,.reading .sticky{position:relative;left:auto!important;top:auto!important;margin:15px 0}
+@media(max-width:700px){:root{--pageW:calc(100vw - 24px);--pageH:auto}.top{gap:4px}.brand{display:none}.doc{padding:55px 28px 70px}.editor-scroll{padding:14px 6px 90px}.find{width:150px}.pane{max-height:130px;overflow:auto}.toc{left:10px;right:10px;width:auto}}
+@media print{body{background:#fff}.top,.tabs,.ribbon,.toc,.status{display:none!important}.workspace{padding:0}.editor-scroll{padding:0;display:block}.doc{width:auto;min-height:auto;box-shadow:none;padding:0}.obj{position:relative!important;left:auto!important;top:auto!important}}
+</style>
+</head>
+<body>
+<div id="home" class="homeview" style="padding:40px;max-width:900px;margin:auto"><h1>UPSC NoteMaker Ultimate</h1><button class="filebtn" onclick="newNote()">＋ New document</button><div id="notes"></div></div>
+<div id="editor" class="hidden">
+<div class="top">
+<button class="filebtn" onclick="toggleFileMenu()">File</button><button class="iconbtn" onclick="goHome()">←</button>
+<span class="brand">NoteMaker Ultimate</span><input id="title" class="docname" placeholder="Untitled document" oninput="scheduleSave()"><span id="saved" class="save">Saved</span>
+<button class="iconbtn" title="Undo" onclick="cmd('undo')">↶</button><button class="iconbtn" title="Redo" onclick="cmd('redo')">↷</button>
+</div>
+<div class="tabs">
+<button class="tab active" onclick="tab('homeTab',this)">Home</button><button class="tab" onclick="tab('insertTab',this)">Insert</button><button class="tab" onclick="tab('drawTab',this)">Draw</button><button class="tab" onclick="tab('layoutTab',this)">Layout</button><button class="tab" onclick="tab('viewTab',this)">View</button>
+</div>
+<div class="ribbon">
+<div id="homeTab" class="pane active">
+<select onchange="fontName(this.value)"><option>Font</option><option>Arial</option><option>Georgia</option><option>Times New Roman</option><option>Garamond</option><option>Palatino Linotype</option><option>Verdana</option><option>Tahoma</option><option>Trebuchet MS</option><option>Courier New</option></select>
+<select onchange="fontSize(this.value)"><option>Size</option><option>9</option><option>10</option><option>11</option><option>12</option><option>14</option><option>16</option><option>18</option><option>20</option><option>24</option><option>28</option><option>32</option><option>40</option><option>48</option><option>60</option></select>
+<select onchange="block(this.value)"><option>Style</option><option value="p">Normal</option><option value="h1">Title</option><option value="h2">Heading 1</option><option value="h3">Heading 2</option><option value="h4">Heading 3</option><option value="blockquote">Quote</option></select>
+<button onclick="cmd('bold')"><b>B</b></button><button onclick="cmd('italic')"><i>I</i></button><button onclick="cmd('underline')"><u>U</u></button><button onclick="cmd('strikeThrough')"><s>S</s></button><span class="sep"></span>
+<label>Text <input class="color" id="textColor" type="color" value="#202124" onchange="color('foreColor',this.value)"></label><label>Highlight <input class="color" id="hlColor" type="color" value="#fff59d" onchange="color('hiliteColor',this.value)"></label>
+<button onclick="cmd('justifyLeft')">Left</button><button onclick="cmd('justifyCenter')">Center</button><button onclick="cmd('justifyRight')">Right</button><button onclick="cmd('justifyFull')">Justify</button><span class="sep"></span>
+<button onclick="cmd('insertUnorderedList')">• List</button><button onclick="cmd('insertOrderedList')">1. List</button><button onclick="indent(1)">Indent</button><button onclick="indent(-1)">Outdent</button>
+</div>
+<div id="insertTab" class="pane">
+<button onclick="pickImage()">Image</button><button onclick="pickMedia()">Video / Audio / PDF</button><button onclick="pickFile()">File</button><button onclick="addSticky()">Sticky note</button><button onclick="insertTableDialog()">Table</button><button onclick="insertFootnote()">Footnote</button><button onclick="makeLink()">Hyperlink</button><button onclick="internalLink()">Cross-reference</button><button onclick="addUpdate()">Update</button><button onclick="insertRule()">Horizontal rule</button><button onclick="insertPageBreak()">Page break</button>
+</div>
+<div id="drawTab" class="pane">
+<button onclick="setDraw('pen')">Pen</button><button onclick="setDraw('highlighter')">Highlighter</button><button onclick="setDraw('eraser')">Eraser</button><input id="penColor" class="color" type="color" value="#202124"><label>Width <input id="penWidth" type="range" min="1" max="28" value="3"></label><button onclick="clearInk()">Clear drawing</button><button onclick="setDraw(null)">Select / type</button>
+</div>
+<div id="layoutTab" class="pane">
+<button onclick="setMargin(45)">Narrow</button><button onclick="setMargin(78)">Normal</button><button onclick="setMargin(110)">Wide</button><button onclick="pageView(true)">Page boundaries</button><button onclick="pageView(false)">Continuous view</button>
+</div>
+<div id="viewTab" class="pane">
+<input id="find" class="find" placeholder="Find in document" onkeydown="if(event.key==='Enter')findText()"><button onclick="findText()">Find</button><button onclick="replaceText()">Replace</button><button onclick="clearMarks()">Clear</button><button onclick="toggleToc()">TOC</button><button onclick="toggleReading()">Reading mode</button><button onclick="zoom(-1)">−</button><button onclick="zoom(1)">＋</button>
+</div>
+</div>
+<div id="workspace" class="workspace"><div class="editor-scroll"><div id="doc" class="doc" contenteditable="true" spellcheck="true"></div></div></div>
+<div id="toc" class="toc hidden"></div><div id="status" class="status hidden"></div>
+<canvas id="inkLayer"></canvas>
+<input id="imagePicker" type="file" accept="image/*" hidden><input id="mediaPicker" type="file" accept="video/*,audio/*,application/pdf" hidden><input id="filePicker" type="file" hidden>
+</div>
+<script>
+const DB='notemaker_ultimate',STORE='notes';let current=null,timer=null,savedRange=null,selected=null,drag=null,resize=null,rotate=null,drawMode=null,zoomLevel=1,marks=[];
+function tab(id,b){document.querySelectorAll('.pane').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
+function db(){return new Promise((res,rej)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function notes(){let d=await db();return new Promise((res,rej)=>{let r=d.transaction(STORE,'readonly').objectStore(STORE).getAll();r.onsuccess=()=>res((r.result||[]).sort((a,b)=>b.updated-a.updated));r.onerror=()=>rej(r.error)})}
+async function put(n){let d=await db();return new Promise(res=>{let t=d.transaction(STORE,'readwrite');t.objectStore(STORE).put(n);t.oncomplete=res})}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+async function renderHome(){let ns=await notes(),el=document.getElementById('notes');el.innerHTML=ns.length?ns.map(n=>`<div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:15px;margin-top:12px;cursor:pointer" onclick="openNote('${n.id}')"><b>${esc(n.title||'Untitled document')}</b><div style="color:#777;font-size:12px;margin-top:5px">${new Date(n.updated).toLocaleString()}</div></div>`).join(''):'<p style="color:#777">No documents yet.</p>'}
+function newNote(){current={id:Date.now().toString(),title:'',html:'',ink:[],updated:Date.now()};showEditor();document.getElementById('title').value='';document.getElementById('doc').innerHTML='';clearInk();focusEnd();save()}
+async function openNote(id){current=(await notes()).find(n=>n.id===id);if(!current)return;showEditor();document.getElementById('title').value=current.title||'';document.getElementById('doc').innerHTML=current.html||'';bindObjects();renderInk(current.ink||[]);buildToc()}
+function showEditor(){document.getElementById('home').classList.add('hidden');document.getElementById('editor').classList.remove('hidden');resizeInk()}
+function goHome(){save();document.getElementById('editor').classList.add('hidden');document.getElementById('home').classList.remove('hidden');renderHome()}
+function scheduleSave(){document.getElementById('saved').textContent='Saving…';clearTimeout(timer);timer=setTimeout(save,900)}
+async function save(){if(!current)return;current.title=document.getElementById('title').value.trim();current.html=document.getElementById('doc').innerHTML;current.ink=inkData;current.updated=Date.now();await put(current);document.getElementById('saved').textContent='Saved';buildToc()}
+function focusEnd(){let d=document.getElementById('doc');d.focus();let r=document.createRange();r.selectNodeContents(d);r.collapse(false);let s=getSelection();s.removeAllRanges();s.addRange(r)}
+function saveSel(){let s=getSelection();if(s&&s.rangeCount)savedRange=s.getRangeAt(0).cloneRange()}
+function restoreSel(){if(savedRange){let s=getSelection();s.removeAllRanges();s.addRange(savedRange)}}
+function cmd(c,v=null){document.getElementById('doc').focus();restoreSel();document.execCommand(c,false,v);scheduleSave()}
+function color(c,v){saveSel();cmd(c,v)}
+function fontName(v){if(v&&v!=='Font')cmd('fontName',v)}
+function fontSize(v){if(!v||v==='Size')return;saveSel();cmd('fontSize','7');let s=getSelection();if(s.rangeCount){let n=s.anchorNode?.parentElement;if(n?.tagName==='FONT'){n.removeAttribute('size');n.style.fontSize=v+'px'}}scheduleSave()}
+function block(v){if(v&&v!=='Style')cmd('formatBlock',v)}
+function indent(n){cmd(n>0?'indent':'outdent')}
+function makeLink(){saveSel();let u=prompt('Web address');if(u){restoreSel();cmd('createLink',u)}}
+function internalLink(){let hs=[...document.querySelectorAll('#doc h1,#doc h2,#doc h3,#doc h4')];if(!hs.length)return alert('Create headings first.');let text=hs.map((h,i)=>`${i+1}. ${h.innerText}`).join('\\n');let n=prompt('Enter heading number:\\n'+text);let h=hs[+n-1];if(h){h.id=h.id||'h-'+Math.random().toString(36).slice(2);saveSel();restoreSel();cmd('createLink','#'+h.id)}}
+function insertHtml(x){restoreSel();document.execCommand('insertHTML',false,x);scheduleSave()}
+function insertRule(){insertHtml('<hr>')}
+function insertPageBreak(){insertHtml('<div class="pagebreak" contenteditable="false"></div><p><br></p>')}
+function insertFootnote(){let n=document.querySelectorAll('.footnote').length+1;insertHtml(`<sup class="footnote">[${n}]</sup>`);let d=document.createElement('div');d.className='footnotes';d.contentEditable='true';d.innerHTML=`<small><b>${n}.</b> Footnote text</small>`;document.getElementById('doc').appendChild(d);scheduleSave()}
+function addUpdate(){let x=document.createElement('div');x.className='updateBlock';x.contentEditable='true';x.style.cssText='border-left:3px solid #6b7280;background:#f7f8fa;padding:10px;margin:12px 0';x.innerHTML='<b>Update</b> — type the update here.';document.getElementById('doc').appendChild(x);focusNode(x);scheduleSave()}
+function focusNode(n){let r=document.createRange();r.selectNodeContents(n);r.collapse(false);let s=getSelection();s.removeAllRanges();s.addRange(r);n.focus?.()}
+function insertTableDialog(){let r=prompt('Rows: 10, 20, 30, 40 or 50 (or any number)','10');let c=prompt('Columns','4');r=parseInt(r);c=parseInt(c);if(!r||!c||r>200||c>50)return;let t=document.createElement('div');t.className='tablebox';let tools='<div class="tabletools"><button onclick="addRow(this)">+ Row</button><button onclick="addCol(this)">+ Column</button><button onclick="delRow(this)">− Row</button><button onclick="delCol(this)">− Column</button></div>';let table=document.createElement('table');table.className='grid';for(let i=0;i<r;i++){let tr=table.insertRow();for(let j=0;j<c;j++){let cell=tr.insertCell();cell.innerHTML='&nbsp;'}}t.innerHTML=tools;t.appendChild(table);document.getElementById('doc').appendChild(t);bindTable(t);scheduleSave()}
+function bindTable(t){t.addEventListener('click',()=>{document.querySelectorAll('.tablebox').forEach(x=>x.classList.remove('selected'));t.classList.add('selected')})}
+function addRow(b){let t=b.parentElement.nextElementSibling,cols=t.rows[0]?.cells.length||1,tr=t.insertRow();for(let i=0;i<cols;i++)tr.insertCell().innerHTML='&nbsp;';scheduleSave()}
+function addCol(b){let t=b.parentElement.nextElementSibling;for(let r of t.rows)r.insertCell().innerHTML='&nbsp;';scheduleSave()}
+function delRow(b){let t=b.parentElement.nextElementSibling;if(t.rows.length>1)t.deleteRow(t.rows.length-1);scheduleSave()}
+function delCol(b){let t=b.parentElement.nextElementSibling;if((t.rows[0]?.cells.length||1)>1)for(let r of t.rows)r.deleteCell(r.cells.length-1);scheduleSave()}
+function addSticky(){let s=document.createElement('div');s.className='sticky selected';s.contentEditable='true';s.style.left='110px';s.style.top=(document.getElementById('doc').scrollHeight+40)+'px';s.innerHTML='<button class="close" contenteditable="false" onclick="this.parentElement.remove();scheduleSave()">×</button>Write a thought, reminder or source…';document.getElementById('doc').appendChild(s);bindSticky(s);scheduleSave()}
+function pickImage(){saveSel();document.getElementById('imagePicker').click()}
+function pickMedia(){saveSel();document.getElementById('mediaPicker').click()}
+function pickFile(){saveSel();document.getElementById('filePicker').click()}
+function importPicked(input,kind){let f=input.files?.[0];if(!f)return;if(f.size>100*1024*1024){alert('Maximum file size is 100 MB.');input.value='';return}saveSel();if(window.NativeBridge&&NativeBridge.importAttachment){window.pendingKind=kind;NativeBridge.importAttachment(f.name,f.type,f.size)}else localObject(f,kind);input.value=''}
+function localObject(f,kind){let u=URL.createObjectURL(f);if(kind==='image')createMedia(u,'image');else if(f.type.startsWith('video/'))createMedia(u,'video');else if(f.type.startsWith('audio/'))createMedia(u,'audio');else createFile(u,f.name)}
+document.getElementById('imagePicker').onchange=e=>importPicked(e.target,'image');document.getElementById('mediaPicker').onchange=e=>importPicked(e.target,'media');document.getElementById('filePicker').onchange=e=>importPicked(e.target,'file');
+function onNativeAttachment(id,name,mime,size){let u='https://notemaker.local/attachments/'+id;if(mime.startsWith('image/'))createMedia(u,'image');else if(mime.startsWith('video/'))createMedia(u,'video');else if(mime.startsWith('audio/'))createMedia(u,'audio');else createFile(u,name);scheduleSave()}
+function createFile(url,name){let o=document.createElement('div');o.className='obj file';o.style.left='100px';o.style.top='150px';o.style.width='250px';o.style.height='65px';o.contentEditable='false';o.innerHTML='<span class="fileicon">📎</span><span class="filename">'+esc(name||'File')+'</span><span class="handle hbr"></span>';document.getElementById('doc').appendChild(o);bindObject(o);selectObj(o)}
+function createMedia(url,type){let o=document.createElement('div');o.className='obj';o.style.left='100px';o.style.top='150px';o.style.width=type==='audio'?'320px':'360px';o.style.height=type==='audio'?'70px':'230px';o.contentEditable='false';let tag=type==='image'?`<img src="${url}">`:type==='video'?`<video controls src="${url}"></video>`:`<audio controls src="${url}"></audio>`;o.innerHTML=tag+'<span class="rotate">↻</span><span class="handle htl"></span><span class="handle htr"></span><span class="handle hbl"></span><span class="handle hbr"></span>';document.getElementById('doc').appendChild(o);bindObject(o);selectObj(o)}
+function bindObjects(){document.querySelectorAll('.obj').forEach(bindObject);document.querySelectorAll('.sticky').forEach(bindSticky);document.querySelectorAll('.tablebox').forEach(bindTable)}
+function selectObj(o){document.querySelectorAll('.obj,.sticky').forEach(x=>x.classList.remove('selected'));o.classList.add('selected');selected=o}
+function bindObject(o){if(o.dataset.bound)return;o.dataset.bound='1';o.addEventListener('pointerdown',e=>{if(e.target.classList.contains('handle')){e.preventDefault();selectObj(o);resize={o,x:e.clientX,y:e.clientY,w:o.offsetWidth,h:o.offsetHeight};return}if(e.target.classList.contains('rotate')){e.preventDefault();selectObj(o);rotate={o,cx:o.offsetLeft+o.offsetWidth/2,cy:o.offsetTop+o.offsetHeight/2};return}selectObj(o);drag={o,x:e.clientX,y:e.clientY,l:parseFloat(o.style.left)||0,t:parseFloat(o.style.top)||0};e.preventDefault()})}
+function bindSticky(s){if(s.dataset.bound)return;s.dataset.bound='1';s.addEventListener('pointerdown',e=>{if(e.target.classList.contains('close'))return;document.querySelectorAll('.sticky').forEach(x=>x.classList.remove('selected'));s.classList.add('selected');selected=s;drag={o:s,x:e.clientX,y:e.clientY,l:parseFloat(s.style.left)||0,t:parseFloat(s.style.top)||0};e.preventDefault()})}
+document.addEventListener('pointermove',e=>{if(resize){resize.o.style.width=Math.max(60,resize.w+e.clientX-resize.x)+'px';resize.o.style.height=Math.max(45,resize.h+e.clientY-resize.y)+'px'}else if(drag){drag.o.style.left=Math.max(0,drag.l+e.clientX-drag.x)+'px';drag.o.style.top=Math.max(0,drag.t+e.clientY-drag.y)+'px'}else if(rotate){let a=Math.atan2(e.clientY-rotate.cy,e.clientX-rotate.cx)*180/Math.PI;rotate.o.style.transform=`rotate(${a}deg)`}if(resize||drag||rotate)scheduleSave()});
+document.addEventListener('pointerup',()=>{resize=drag=rotate=null});
+document.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&selected&&!isEditing()){if(selected.classList.contains('obj')||selected.classList.contains('sticky')){e.preventDefault();selected.remove();selected=null;scheduleSave()}}});
+function isEditing(){let a=document.activeElement;return a===document.getElementById('doc')||a?.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(a?.tagName)}
+document.getElementById('doc').addEventListener('click',e=>{if(!e.target.closest('.obj,.sticky')){document.querySelectorAll('.obj,.sticky').forEach(x=>x.classList.remove('selected'));selected=null}});
+document.getElementById('doc').addEventListener('input',()=>{scheduleSave();resizeInk();buildToc()});
+document.getElementById('doc').addEventListener('focus',()=>document.getElementById('doc').classList.add('editing'));
+function setMargin(v){document.getElementById('doc').style.paddingLeft=v+'px';document.getElementById('doc').style.paddingRight=v+'px'}
+function pageView(on){document.body.classList.toggle('continuous',!on);document.getElementById('doc').style.background=on?'repeating-linear-gradient(to bottom,#fff 0 1120px,#eef1f5 1120px 1140px)':'#fff'}
+function toggleReading(){document.body.classList.toggle('reading')}
+function toggleFileMenu(){let x=document.querySelector('.filemenu');if(x){x.remove();return}let m=document.createElement('div');m.className='filemenu';m.innerHTML='<button onclick="save();this.parentNode.remove()">Save</button><button onclick="exportHTML();this.parentNode.remove()">Export HTML</button><button onclick="exportWord();this.parentNode.remove()">Export Word-compatible document</button><button onclick="window.NativeBridge&&NativeBridge.printNote?NativeBridge.printNote():window.print();this.parentNode.remove()">Print / PDF</button><button onclick="deleteCurrent();this.parentNode.remove()">Delete document</button>';document.body.appendChild(m)}
+async function deleteCurrent(){if(!current)return;if(!confirm('Delete this document?'))return;let d=await db();d.transaction(STORE,'readwrite').objectStore(STORE).delete(current.id);goHome()}
+function download(name,type,data){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportHTML(){download((current?.title||'document')+'.html','text/html',`<!doctype html><html><head><meta charset="utf-8"><style>body{font-family:Georgia,serif;max-width:800px;margin:auto;line-height:1.6}img,video{max-width:100%}table{border-collapse:collapse;width:100%}td,th{border:1px solid #888;padding:6px}</style></head><body>${document.getElementById('doc').innerHTML}</body></html>`)}
+function exportWord(){download((current?.title||'document')+'.doc','application/msword',`<html><body>${document.getElementById('doc').innerHTML}</body></html>`)}
+function findText(){clearMarks();let q=document.getElementById('find').value.trim();if(!q)return;let root=document.getElementById('doc');let w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];while(w.nextNode())nodes.push(w.currentNode);let re=new RegExp(q.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&'),'gi');nodes.forEach(n=>{let f=document.createDocumentFragment(),last=0,m,hit=false;while((m=re.exec(n.nodeValue))){hit=true;f.append(n.nodeValue.slice(last,m.index));let mk=document.createElement('mark');mk.textContent=m[0];mk.style.background='#ffe66d';f.append(mk);last=m.index+m[0].length}if(hit){f.append(n.nodeValue.slice(last));n.replaceWith(f)}});marks=[...root.querySelectorAll('mark')];marks[0]?.scrollIntoView({behavior:'smooth',block:'center'});status(marks.length+' match'+(marks.length===1?'':'es'))}
+function replaceText(){let f=prompt('Find');if(!f)return;let r=prompt('Replace with','')??'';let root=document.getElementById('doc');let w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];while(w.nextNode())nodes.push(w.currentNode);nodes.forEach(n=>n.nodeValue=n.nodeValue.split(f).join(r));scheduleSave()}
+function clearMarks(){document.querySelectorAll('#doc mark').forEach(m=>m.replaceWith(document.createTextNode(m.textContent)));marks=[]}
+function status(t){let s=document.getElementById('status');s.textContent=t;s.classList.remove('hidden');setTimeout(()=>s.classList.add('hidden'),2000)}
+function toggleToc(){let t=document.getElementById('toc');if(!t.classList.contains('hidden')){t.classList.add('hidden');return}buildToc();t.classList.remove('hidden')}
+function buildToc(){let hs=[...document.querySelectorAll('#doc h1,#doc h2,#doc h3,#doc h4')],t=document.getElementById('toc');if(!t)return;t.innerHTML='<b>Table of Contents</b>';hs.forEach((h,i)=>{h.id=h.id||'heading-'+i;let a=document.createElement('a');a.href='#'+h.id;a.style.paddingLeft=((+h.tagName[1]-1)*14)+'px';a.textContent=h.textContent||'Untitled';a.onclick=e=>{e.preventDefault();h.scrollIntoView({behavior:'smooth',block:'center'})};t.appendChild(a)})}
+function zoom(n){zoomLevel=Math.max(.8,Math.min(1.3,zoomLevel+n*.1));document.getElementById('doc').style.transform=`scale(${zoomLevel})`;document.getElementById('doc').style.transformOrigin='top center';document.querySelector('.editor-scroll').style.paddingBottom=(120+(zoomLevel-1)*100)+'px'}
+let inkData=[],drawing=false,last=null;
+function setDraw(mode){drawMode=mode;document.body.classList.toggle('drawing',!!mode);resizeInk();if(mode)status(mode==='highlighter'?'Highlighter active':mode==='eraser'?'Eraser active':'Pen active')}
+function resizeInk(){let d=document.getElementById('doc'),c=document.getElementById('inkLayer');if(!d||!c)return;let w=d.scrollWidth,h=Math.max(d.scrollHeight,1120);c.width=w*devicePixelRatio;c.height=h*devicePixelRatio;c.style.width=w+'px';c.style.height=h+'px';c.getContext('2d').setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);renderInk(inkData)}
+function renderInk(data){inkData=data||[];let c=document.getElementById('inkLayer'),x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);x.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);for(let s of inkData){x.save();x.globalCompositeOperation=s.mode==='eraser'?'destination-out':'source-over';x.strokeStyle=s.color;x.globalAlpha=s.alpha||1;x.lineWidth=s.width;x.lineCap='round';x.lineJoin='round';x.beginPath();s.points.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y));x.stroke();x.restore()}}
+function clearInk(){inkData=[];renderInk([]);scheduleSave()}
+document.getElementById('inkLayer').addEventListener('pointerdown',e=>{if(!drawMode)return;drawing=true;let r=e.currentTarget.getBoundingClientRect();last={x:e.clientX-r.left,y:e.clientY-r.top};inkData.push({mode:drawMode==='eraser'?'eraser':'draw',color:drawMode==='highlighter'?'#fff59d':document.getElementById('penColor').value,width:+document.getElementById('penWidth').value*(drawMode==='highlighter'?4:1),alpha:drawMode==='highlighter'?.38:1,points:[last]});e.currentTarget.setPointerCapture(e.pointerId)});
+document.getElementById('inkLayer').addEventListener('pointermove',e=>{if(!drawing)return;let r=e.currentTarget.getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};inkData.at(-1).points.push(p);renderInk(inkData)});
+document.getElementById('inkLayer').addEventListener('pointerup',()=>{drawing=false;scheduleSave()});
+function bindInk(){renderInk(current?.ink||[])}
+document.getElementById('doc').addEventListener('scroll',()=>resizeInk());
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){setDraw(null);document.querySelectorAll('.obj,.sticky').forEach(x=>x.classList.remove('selected'));selected=null}});
+window.addEventListener('resize',resizeInk);
+db().then(renderHome);
+</script>
+</body></html>
